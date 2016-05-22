@@ -1,0 +1,11 @@
+# This is the Dockerfile I wish JFrog would write. It uses the init entrypoint pattern and environment variables to
+# configure a functional instance of Artifactory.
+
+FROM        jfrog-docker-reg2.bintray.io/jfrog/artifactory-pro
+MAINTAINER  btwebb@gmail.com
+
+COPY docker-entrypoint-arty.sh /
+
+# DO NOT, repeat DO NOT put environment variables in here. They will become part of the image and
+# can expose secrets! Export all your environment variables as before you start your docker images.
+CMD ["/docker-entrypoint-arty.sh", "/opt/jfrog/artifactory/bin/artifactory.sh"]

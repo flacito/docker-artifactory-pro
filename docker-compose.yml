@@ -1,0 +1,81 @@
+version: '2'
+
+services:
+
+  artydb:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MARIA_ROOT_PASSWORD}'
+      MYSQL_DATABASE: '${ARTY_DB_NAME}'
+      MYSQL_USER: '${ARTY_DB_USER}'
+      MYSQL_PASSWORD: '${ARTY_DB_PASSWORD}'
+    # networks:
+    #   - backend
+
+  arty1:
+    build: ../artifactory/.
+    environment:
+        ARTY_PRO_LICENSE: '${ARTY_PRO_LICENSE1}'
+
+        ARTY_CHANGE_STORAGE: '${ARTY_CHANGE_STORAGE}'
+        ARTY_DATABASE_TYPE: '${ARTY_DATABASE_TYPE}'
+        ARTY_DB_HOST: '${ARTY_DB_HOST}'
+        ARTY_DB_PORT: '${ARTY_DB_PORT}'
+        ARTY_DB_NAME: '${ARTY_DB_NAME}'
+        ARTY_DB_USER: '${ARTY_DB_USER}'
+        ARTY_DB_PASSWORD: '${ARTY_DB_PASSWORD}'
+
+        ARTY_IS_HA: '${ARTY_IS_HA}'
+        ARTY_HA_IS_PRIMARY: 'true'
+        ARTY_HA_CLUSTER_HOME: '${ARTY_HA_CLUSTER_HOME}'
+        ARTY_HA_MEMBERSHIP_PORT: '${ARTY_HA_MEMBERSHIP_PORT}'
+        ARTY_HA_CLUSTER_TOKEN: '${ARTY_HA_CLUSTER_TOKEN}'
+    volumes:
+      - ${ARTY_HA_CLUSTER_HOME}
+      - ./mysql-connector-java-5.1.33-bin.jar:/opt/jfrog/artifactory/tomcat/lib/mysql-jdbc.jar
+    # networks:
+    #   - backend
+    links:
+      - artydb
+
+  arty2:
+    build: ../artifactory/.
+    environment:
+        ARTY_PRO_LICENSE: '${ARTY_PRO_LICENSE2}'
+
+        ARTY_CHANGE_STORAGE: '${ARTY_CHANGE_STORAGE}'
+        ARTY_DATABASE_TYPE: '${ARTY_DATABASE_TYPE}'
+        ARTY_DB_HOST: '${ARTY_DB_HOST}'
+        ARTY_DB_PORT: '${ARTY_DB_PORT}'
+        ARTY_DB_NAME: '${ARTY_DB_NAME}'
+        ARTY_DB_USER: '${ARTY_DB_USER}'
+        ARTY_DB_PASSWORD: '${ARTY_DB_PASSWORD}'
+
+        ARTY_IS_HA: '${ARTY_IS_HA}'
+        ARTY_HA_IS_PRIMARY: 'false'
+        ARTY_HA_CLUSTER_HOME: '${ARTY_HA_CLUSTER_HOME}'
+        ARTY_HA_MEMBERSHIP_PORT: '${ARTY_HA_MEMBERSHIP_PORT}'
+        ARTY_HA_CLUSTER_TOKEN: '${ARTY_HA_CLUSTER_TOKEN}'
+    volumes:
+      - ${ARTY_HA_CLUSTER_HOME}
+      - ./mysql-connector-java-5.1.33-bin.jar:/opt/jfrog/artifactory/tomcat/lib/mysql-jdbc.jar
+    # networks:
+    #   - backend
+    links:
+      - artydb
+      - arty1
+
+  haproxy:
+    image: dockercloud/haproxy:latest
+    links:
+      - arty1
+      - arty2
+    ports:
+      - 7080:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # networks:
+    #   - backend
+
+# networks:
+#   backend:
