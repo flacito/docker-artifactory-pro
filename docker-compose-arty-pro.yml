@@ -13,7 +13,9 @@ services:
     #   - backend
 
   arty1:
-    build: ../artifactory/.
+    build:
+      context: .
+      dockerfile: Dockerfile-artypro
     environment:
         ARTY_PRO_LICENSE: '${ARTY_PRO_LICENSE1}'
 
@@ -32,14 +34,16 @@ services:
         ARTY_HA_CLUSTER_TOKEN: '${ARTY_HA_CLUSTER_TOKEN}'
     volumes:
       - ${ARTY_HA_CLUSTER_HOME}
-      - ./mysql-connector-java-5.1.33-bin.jar:/opt/jfrog/artifactory/tomcat/lib/mysql-jdbc.jar
+      - ${ARTY_JDBC_JAR_PATH}:/opt/jfrog/artifactory/tomcat/lib/mysql-jdbc.jar
     # networks:
     #   - backend
     links:
       - artydb
 
   arty2:
-    build: ../artifactory/.
+    build:
+      context: .
+      dockerfile: Dockerfile-artypro
     environment:
         ARTY_PRO_LICENSE: '${ARTY_PRO_LICENSE2}'
 
@@ -58,7 +62,7 @@ services:
         ARTY_HA_CLUSTER_TOKEN: '${ARTY_HA_CLUSTER_TOKEN}'
     volumes:
       - ${ARTY_HA_CLUSTER_HOME}
-      - ./mysql-connector-java-5.1.33-bin.jar:/opt/jfrog/artifactory/tomcat/lib/mysql-jdbc.jar
+      - ${ARTY_JDBC_JAR_PATH}:/opt/jfrog/artifactory/tomcat/lib/mysql-jdbc.jar
     # networks:
     #   - backend
     links:

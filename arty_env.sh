@@ -14,7 +14,7 @@ export ARTY_DB_PORT='3306'
 export ARTY_DB_NAME='artifactory'
 export ARTY_DB_USER='artifactory'
 export ARTY_DB_PASSWORD='p@ssw0rD'
-export ARTY_JDBC_JAR_URL='http://localhost/mysql/mysql-connector-java-5.1.33-bin.jar'
+export ARTY_JDBC_JAR_PATH='/Users/C62963/CloudStation/Software/jdbc/mysql-connector-java-5.1.33-bin.jar'
 
 # REFACTOR, make DB independent. Do the init scripts directory trick probably.
 export MARIA_ROOT_PASSWORD='@n0th3rp@ssw0rd'
